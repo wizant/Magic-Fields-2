@@ -19,7 +19,7 @@ class mf_ajax_call{
       $order = $data['order'];
       $order = split(',',$order);
       array_walk( $order, create_function( '&$v,$k', '$v =  str_replace("order_","",$v);' ));
-      
+
       if( $thing =  mf_custom_fields::save_order_field( $data['group_id'], $order ) ) {
         print "1";
         die;
@@ -30,7 +30,7 @@ class mf_ajax_call{
 
   public function check_name_post_type($data){
     global $mf_domain;
-    
+
     $type = $data['post_type'];
     $id = $data['post_type_id'];
     $check = mf_posttype::check_post_type($type,$id);
@@ -45,28 +45,28 @@ class mf_ajax_call{
 
   public function check_name_custom_group($data){
     global $mf_domain;
-    
+
     $name = $data['group_name'];
     $post_type = $data['post_type'];
     $id = $data['group_id'];
     $resp = array('success' => 1);
-    
+
     $check = mf_custom_group::check_group($name,$post_type,$id);
     if($check){
       $resp = array('success' => 0, 'msg' => __('The name of Group exist in this post type, Please choose a different name.',$mf_domain) );
     }
-    
+
     echo json_encode($resp);
   }
 
   public function check_name_custom_field($data){
     global $mf_domain;
-    
+
     $name = $data['field_name'];
     $post_type = $data['post_type'];
     $id = $data['field_id'];
     $resp = array('success' => 1);
-    
+
     $check = mf_custom_fields::check_group($name,$post_type,$id);
     if($check){
       $resp = array('success' => 0, 'msg' => __('The name of Field exist in this post type, Please choose a different name.',$mf_domain) );
@@ -76,7 +76,7 @@ class mf_ajax_call{
 
   public function check_type_custom_taxonomy($data){
     global $mf_domain;
-    
+
     $type = $data['taxonomy_type'];
     $id = $data['taxonomy_id'];
     $check = mf_custom_taxonomy::check_custom_taxonomy($type,$id);
@@ -115,16 +115,16 @@ class mf_ajax_call{
 
 	public function set_default_categories($data){
 		global $wpdb;
-		
+
 		$post_type_key = sprintf('_cat_%s',$data['post_type']);
 		$cats = preg_split('/\|\|\|/', $data['cats']);
 		$cats = maybe_serialize($cats);
-		
+
 		$check_parent ="SELECT meta_id FROM ".$wpdb->postmeta." WHERE meta_key='".$post_type_key."' ";
 		$query_parent = $wpdb->query($check_parent);
 
     if($query_parent){
-			$sql = "UPDATE ". $wpdb->postmeta .
+		  $sql = "UPDATE ". $wpdb->postmeta .
               " SET meta_value = '".$cats."' ".
               " WHERE meta_key = '".$post_type_key."' AND post_id = '0' ";
 		}else{
@@ -134,9 +134,9 @@ class mf_ajax_call{
 		}
 		$wpdb->query($sql);
 		$resp = array('success' => 1);
-		
+
 		//update_post_meta(-2, $post_type, $cats);
-		
+
 		echo json_encode($resp);
 	}
 
